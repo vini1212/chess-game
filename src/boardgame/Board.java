@@ -28,6 +28,14 @@ public class Board { //a classe board vai retornar apenas uma peça por vez
 		this.columns = columns;
 	}
 	
+	public Piece piece(int row, int column) {
+		return pieces[row][column];
+	}
+	
+	public Piece piece(Position position) { //vai ter que retornar a peça em relação a uma posição
+		return pieces[position.getRow()][position.getColumn()];
+	}
+	
 	
 	
 	
