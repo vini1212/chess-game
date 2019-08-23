@@ -23,6 +23,9 @@ public class Program {
 				System.out.print("Origem: ");
 				ChessPosition source = UI.readChessPosition(sc);
 				
+				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
+				UI.clearScreen();
+				UI.printBoard(chessMatch.getPieces(), possibleMoves); //vai ser responsável por imprimir o tabuleiro só que colorindo os possiveis movimentos			
 				System.out.println();
 				System.out.print("Destino: ");
 				ChessPosition target = UI.readChessPosition(sc);
