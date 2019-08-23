@@ -15,4 +15,10 @@ public class Rook extends ChessPiece{
 		return "R"; //está sendo apenas uma letra porque na hora que imprimir o tabuleiro vai aparecer essa letra
 	}
 	
+	@Override
+	public boolean[][] possibleMoves() {
+		boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+		return mat;
+	}
+	
 }
