@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -11,6 +14,9 @@ public class ChessMatch {
 	private int turn;
 	private Color currentPlayer;
 	private Board board;
+	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
 
 	public ChessMatch() {
 		board = new Board(8, 8);// quem tem que saber o tamanho do tabuleiro do xadrez é a classe ChessMatch
@@ -80,11 +86,17 @@ public class ChessMatch {
 		Piece p = board.removePiece(source); //remove a peça de posição de origem
 		Piece capturedPiece = board.removePiece(target); //removeu a possível peça de posição de destino
 		board.placePiece(p, target);
+		
+		if(capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.add(capturedPiece); //adicionando a peça capturada na lista de capturedPieces
+		}
 		return capturedPiece;
 	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition()); //tenho uma operação de colocar peça passando as posições de colocar peça passando as coordenadas do xadrez
+		piecesOnTheBoard.add(piece);
 	}
 	
 	private void initialSetup() { //esse método vai ser responsável por colocar as peças no xadrez, ou seja, está iniciando o tabuleiro
