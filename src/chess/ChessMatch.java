@@ -1,6 +1,8 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Piece;
+import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -21,6 +23,27 @@ public class ChessMatch {
 			}
 		}
 		return mat;
+	}
+	
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+		Position source = sourcePosition.toPosition();
+		Position target = targetPosition.toPosition();
+		validateSourcePosition(source);//essa operação vai ser responsável por validar essa posição de origem
+		Piece capturedPiece = makeMove(source, target);
+		return (ChessPiece)capturedPiece; //faz um downcasting pois minha variável é to tipo Piece
+	}
+	
+	private void validateSourcePosition(Position position) {
+		if(!board.thereIsAPiece(position)) { //se não existir uma peça nessa posição vou fazer um tratamento de exceção, nisso ela também vai ser uma exceção de tabuleiro
+			throw new ChessException("Nao existe peca na posicao de origem");
+		}
+	}
+	
+	private Piece makeMove(Position source, Position target) {
+		Piece p = board.removePiece(source); //remove a peça de posição de origem
+		Piece capturedPiece = board.removePiece(target); //removeu a possível peça de posição de destino
+		board.placePiece(p, target);
+		return capturedPiece;
 	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
