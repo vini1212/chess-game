@@ -8,13 +8,25 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
 
+	private int turn;
+	private Color currentPlayer;
 	private Board board;
 
 	public ChessMatch() {
 		board = new Board(8, 8);// quem tem que saber o tamanho do tabuleiro do xadrez é a classe ChessMatch
+		turn = 1;
+		currentPlayer = Color.WHITE;
 		initialSetup(); //na hora que for criada a partida é criado um tabuleiro 8x8 e é chamado o initialSetup
 	}
-
+	
+	public int getTurn() {
+		return turn;
+	}
+	
+	public Color getCurrentPlayer() {
+		return currentPlayer;
+	}
+	
 	public ChessPiece[][] getPieces() { // vai ter que retornar uma matriz de peças de xadrez correspondente a partida,
 		ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()]; // retorna ChessPiece porque estou fazendo um desenvolvimento em camada
 		for (int i = 0; i < board.getRows(); i++) {
@@ -37,12 +49,16 @@ public class ChessMatch {
 		validateSourcePosition(source);//essa operação vai ser responsável por validar essa posição de origem
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		nextTurn();
 		return (ChessPiece)capturedPiece; //faz um downcasting pois minha variável é to tipo Piece
 	}
 	
 	private void validateSourcePosition(Position position) {
 		if(!board.thereIsAPiece(position)) { //se não existir uma peça nessa posição vou fazer um tratamento de exceção, nisso ela também vai ser uma exceção de tabuleiro
 			throw new ChessException("Nao existe peca na posicao de origem");
+		}
+		if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
+			throw new ChessException("A peca escolhida nao e sua");
 		}
 		if (!board.piece(position).isThereAnyPossibleMove()) { //testando se não tem movimento possível
 			throw new ChessException("Nao existe movimentos possiveis para a peca escolhida");
@@ -53,6 +69,11 @@ public class ChessMatch {
 		if (!board.piece(source).possibleMove(target)) { //para peça de origem a posição de destino não é um movimento de possível então não pode se mover para lá
 			throw new ChessException("A peca escolhida nao pode ser movida para a posicao de destino");
 		}
+	}
+	
+	private void nextTurn() {
+		turn++;
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
 	private Piece makeMove(Position source, Position target) {
