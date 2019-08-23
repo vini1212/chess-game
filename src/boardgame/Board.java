@@ -36,6 +36,11 @@ public class Board { //a classe board vai retornar apenas uma peça por vez
 		return pieces[position.getRow()][position.getColumn()];
 	}
 	
+	public void placePiece(Piece piece, Position position) {
+		pieces[position.getRow()][position.getColumn()] = piece; //matriz de peças que foi declarada no tabuleiro, fazendo a matriz na posição dada e atribuir a ela a peça que informei
+		piece.position = position; //não está sendo atribuida como nula mais ela é acessivel diretamente porque foi colocada como protected
+	}
+	
 	
 	
 	
