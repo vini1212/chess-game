@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -14,6 +15,7 @@ public class ChessMatch {
 	private int turn;
 	private Color currentPlayer;
 	private Board board;
+	private boolean check;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -31,6 +33,10 @@ public class ChessMatch {
 	
 	public Color getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public boolean getCheck() {
+		return check;
 	}
 	
 	public ChessPiece[][] getPieces() { // vai ter que retornar uma matriz de peças de xadrez correspondente a partida,
@@ -55,6 +61,14 @@ public class ChessMatch {
 		validateSourcePosition(source);//essa operação vai ser responsável por validar essa posição de origem
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		
+		if(testCheck(currentPlayer)) {
+			undoMove(source, target, capturedPiece);
+			throw new ChessException("Voce nao pode se colocar em check");
+		}
+		
+		check = (testCheck(opponent(currentPlayer))) ? true : false;
+		
 		nextTurn();
 		return (ChessPiece)capturedPiece; //faz um downcasting pois minha variável é to tipo Piece
 	}
@@ -82,6 +96,32 @@ public class ChessMatch {
 		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
+	private Color opponent(Color color) { //dado uma cor retorna um oponente de cada cor
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+	
+	private ChessPiece king(Color color) {
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList()); //filtrar uma lista com expressões lambidas 
+		for(Piece p : list) { //pode ser que percorra minha lista e nenhuma das peças é um rei sendo assim precisando lançar uma exceção
+			if(p instanceof King) {
+				return (ChessPiece)p;
+			}
+		}
+		throw new IllegalStateException("Nao existe o rei " + color + " no tabuleiro"); //isso é para nunca acontecer 
+	}
+	
+	private boolean testCheck(Color color) {
+		Position kingPosition = king(color).getChessPosition().toPosition();//pego a peça do meu rei no formato de matriz
+		List <Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+		for(Piece p : opponentPieces) {
+			boolean[][] mat = p.possibleMoves(); //tenho a matriz de movimentos possivei dessa peça adversária p
+			if (mat[kingPosition.getRow()][kingPosition.getColumn()]) { //se tiver na mesma posição significa que o rei está em check
+				return true;
+			}
+		}
+		return false; //se esgotar o for o rei não está em check 
+	}
+	
 	private Piece makeMove(Position source, Position target) {
 		Piece p = board.removePiece(source); //remove a peça de posição de origem
 		Piece capturedPiece = board.removePiece(target); //removeu a possível peça de posição de destino
@@ -92,6 +132,17 @@ public class ChessMatch {
 			capturedPieces.add(capturedPiece); //adicionando a peça capturada na lista de capturedPieces
 		}
 		return capturedPiece;
+	}
+	
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		Piece p = board.removePiece(target);
+		board.placePiece(p, source);
+		
+		if(capturedPiece != null) { //retorna a jogada para o lugar de origem
+			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
+		}
 	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
