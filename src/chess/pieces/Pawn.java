@@ -46,7 +46,7 @@ public class Pawn extends ChessPiece {
 			}
 			
 			p.setValues(position.getRow() + 2, position.getColumn());
-			Position p2 = new Position(position.getRow() - 1, position.getColumn()); //p2 testa se a posição do p2 está vazia e testa se existe 
+			Position p2 = new Position(position.getRow() + 1, position.getColumn()); //p2 testa se a posição do p2 está vazia e testa se existe 
 			if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p) && getBoard().positionExists(p2) && !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) { //se não existe peça na posição p e se a contagem dos movimento for 0 ai pode mover 2 casas o peão
 				mat[p.getRow()][p.getColumn()] = true;
 			}
