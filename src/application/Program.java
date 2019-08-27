@@ -18,14 +18,13 @@ public class Program {
 		ChessMatch chessMatch = new ChessMatch();
 		List <ChessPiece> captured = new ArrayList<>();
 		
-		while(true) {
+		while(!chessMatch.getCheckMate()) { //terminou o enquanto quer dizer que aconteceu o checkmate
 			try {
 				UI.clearScreen();
 				UI.printMatch(chessMatch, captured);
 				System.out.println();
 				System.out.print("Origem: ");
 				ChessPosition source = UI.readChessPosition(sc);
-				
 				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
 				UI.clearScreen();
 				UI.printBoard(chessMatch.getPieces(), possibleMoves); //vai ser responsável por imprimir o tabuleiro só que colorindo os possiveis movimentos			
@@ -48,6 +47,8 @@ public class Program {
 				sc.nextLine();
 			}
 		}
+		UI.clearScreen();
+		UI.printMatch(chessMatch, captured);
 	}
 
 }
