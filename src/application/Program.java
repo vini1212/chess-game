@@ -37,6 +37,12 @@ public class Program {
 				if (capturedPiece != null) { //sempre quando retornar um movimento e esse retorno resultar uma peça capturada vou adicionar na lista de peças capturadas
 					captured.add(capturedPiece);
 				}
+				
+				if (chessMatch.getPromoted() != null) { //significa que a peça foi promovida
+					System.out.print("Entre com a peca a ser promovida (B/N/R/Q): ");
+					String type = sc.nextLine();
+					chessMatch.replacePromotedPiece(type); //esse jeito é mais fácil de interagir com o usuário sem perder a integridade do xadrez
+				}
 			}
 			catch (ChessException e) {
 				System.out.println(e.getMessage());
